@@ -1,0 +1,133 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Script file="Eon.lua"/>
+	<Button name="EonTemplate" inherits="SecureActionButtonTemplate" virtual="true">
+		<Size x="30" y="25"/>
+        <Attributes>
+			<Attribute name="type" value="cancelaura"/>
+		</Attributes>
+        <Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background"  tile="true">
+			<TileSize>
+				<AbsValue val="0"/>
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="-2" right="-2" top="-2" bottom="-2"/>
+			</BackgroundInsets>
+		</Backdrop>
+		<Layers>
+            <Layer level="ARTWORK">
+                <Texture name="$parentIcon" parentKey="icon">
+                    <TexCoords left="0.07" right="0.93" top="0.07" bottom="0.93"/>	
+                    <Size>
+						<AbsDimension x="25" y="25"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT"/>
+					</Anchors>
+                </Texture>
+                <FontString name="$parentCount" parentKey="count" inherits="NumberFontNormal" justifyH="RIGHT">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT"/>
+							<!--<Offset>
+								<AbsDimension x="-2" y="2"/>
+							</Offset>
+						</Anchor>-->
+					</Anchors>
+				</FontString>
+            </Layer>
+		</Layers>
+        <Frames>
+            <StatusBar name="$parentDuration" parentKey="bar" orientation="VERTICAL" minValue="0" maxValue="100" defaultValue="100">
+                <Size x="3" y="25"/>
+                <BarTexture file="Interface\AddOns\Eon\white"/>
+                <BarColor r="1" g="0" b="0"/>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture name="$parentBackground" file="Interface\AddOns\Eon\white" parentKey="bg" setAllPoints="true" />
+                    </Layer>
+                </Layers>
+                <Anchors>
+                    <Anchor point="TOPLEFT"/>
+                </Anchors>
+            </StatusBar>
+        </Frames>
+		<Scripts>
+            <OnLoad>
+                EonButton_OnLoad(self)
+                if self.filter:find("HARMFUL") then self.debuff = true end
+                self:RegisterEvent("UNIT_AURA")
+                self:RegisterForClicks("RightButtonUp");
+            </OnLoad>
+            <OnEvent>
+                if self.unit ~= (...) then return end
+                EonButton_Update(self)
+            </OnEvent>
+            <OnAttributeChanged>
+                if name ~= "index" then return end
+                EonButton_Update(self)
+            </OnAttributeChanged>
+            <OnUpdate function="EonButton_OnUpdate"/>
+			<OnEnter>
+                local index = self:GetAttribute("index")
+                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                GameTooltip:SetUnitAura(self.unit,index,self.filter)
+			</OnEnter>
+			<OnLeave>
+                GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+	</Button>
+    <Button name="EonWeaponTemplate" inherits="EonTemplate" virtual="true">
+        <Scripts>
+            <OnLoad>
+                EonButton_OnLoad(self)
+                self:SetBackdropColor(0.5,0.2,0.85,1);
+                self:RegisterForClicks("RightButtonUp");
+            </OnLoad>
+            <OnAttributeChanged>
+                if name ~= "target-slot" then return end
+                EonWeaponButton_Update(self)
+            </OnAttributeChanged>
+            <OnUpdate function="EonButton_OnUpdate"/>
+			<OnEnter>
+                local slot = self:GetAttribute("target-slot")
+                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+                GameTooltip:SetInventoryItem("player", slot)
+			</OnEnter>
+			<OnLeave>
+                GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+    </Button>
+    <Button name="EonConsolidateProxy" inherits="EonTemplate" virtual="true">
+        <Scripts>
+            <OnLoad>
+                EonButton_OnLoad(self)
+                self:SetBackdropColor(0,0,0,0.8)
+                self.bar:SetStatusBarColor(1,.5,.5);
+                self.icon:SetTexture("Interface\\Buttons\\BuffConsolidation")
+                self.icon:SetTexCoord(0.15, 0.35, 0.3, 0.7)
+            </OnLoad>
+            <OnUpdate></OnUpdate>
+            <OnClick>
+                if self.consolidateHeader:IsVisible() then
+                    self.consolidateHeader:Hide()
+                else
+                    self.consolidateHeader:Show()
+                end
+            </OnClick>
+            <OnLeave></OnLeave>
+            <OnEnter></OnEnter>
+        </Scripts>
+    </Button>
+<!--<Button name="BuffButtonTemplate" inherits="AuraButtonTemplate" virtual="true">
+		<Scripts>
+			<OnLoad>
+				BuffButton_OnLoad(self);
+			</OnLoad>
+			<OnClick>
+				BuffButton_OnClick(self, button, down);
+			</OnClick>
+		</Scripts>
+	</Button> -->
+</Ui>
