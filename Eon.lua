@@ -34,7 +34,6 @@ local headers = {
         wrapAfter = 16,
         wrapXOffset = 0,
         wrapYOffset = -34,
-        consolidate = true,
         weapons = true,
     },
     ["player|HARMFUL"] = { 
@@ -67,7 +66,7 @@ local defaults = {
         x = -133,
         y = -138,
     },
-    
+    consolidate = true,
     hideblizzard = true,
 }
 
@@ -180,7 +179,7 @@ function Eon.CreateHeader(self,unit,filter,opts)
     end
 
     
-    if opts.consolidate and unit == "player" then
+    if EonDB.consolidate and unit == "player" then
     local chdr = CreateFrame("Frame","consHeader",hdr,"SecureAuraHeaderTemplate")
     chdr.parentHeader = hdr
     chdr:SetFrameLevel(5)
@@ -305,13 +304,18 @@ end
 function Eon.SlashCmd(msg)
     k,v = string.match(msg, "([%w%+%-%=]+) ?(.*)")
     if not k or k == "help" then print([[Usage:
-      |cffff99bb/eon hideblizz|r
-      |cffff99bb/eon lock|r
-      |cffff99bb/eon unlock|r ]]
+      |cffff99bb/eon|r consolidate
+      |cffff99bb/eon|r hideblizz
+      |cffff99bb/eon|r lock
+      |cffff99bb/eon|r unlock ]]
     )end
+    if k == "consolidate" then
+        EonDB.consolidate = not EonDB.consolidate
+        print('Changes will take effect after /reload')
+    end
     if k == "hideblizz" then
         EonDB.hideblizzard = not EonDB.hideblizzard
-        print('Changes will take effect after reloadui')
+        print('Changes will take effect after /reload')
     end
     if k == "unlock" then
         for _, anchor in pairs(anchors) do
