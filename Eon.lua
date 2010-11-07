@@ -34,8 +34,6 @@ local headers = {
         wrapAfter = 16,
         wrapXOffset = 0,
         wrapYOffset = -34,
-        width = 33,
-        height = 28,
         consolidate = true,
         weapons = true,
     },
@@ -47,8 +45,7 @@ local headers = {
         wrapAfter = 5,
         wrapXOffset = 0,
         wrapYOffset = -40,
-        width = 40,
-        height = 32,
+        template = "EonDebuffTemplate",
     }
 }
 
@@ -88,9 +85,12 @@ function EonButton_OnLoad(self)
     if hdr.parentHeader then hdr = hdr.parentHeader end
     self.unit = hdr:GetAttribute("unit")
     self.filter = hdr:GetAttribute("filter")
-    self.btnWidth = hdr:GetAttribute("btnWidth")
-    self.btnHeight = hdr:GetAttribute("btnHeight")
-    EonButton_ChangeSize(self)
+    local w = self:GetWidth()
+    local h = self:GetHeight()
+    self.icon:SetWidth(h)
+    self.icon:SetHeight(h)
+    self.bar:SetWidth(w-h-2)
+    self.bar:SetHeight(h)
 end
 function EonButton_OnUpdate(self,time)
         self.OnUpdateCounter = (self.OnUpdateCounter or 0) + time
@@ -101,6 +101,12 @@ function EonButton_OnUpdate(self,time)
         local left = self.expires - GetTime()
         self.bar:SetValue(left)
         local r,g,b
+        if self.dispelcolor then
+            r,g,b = unpack(self.dispelcolor)
+            self.bar:SetStatusBarColor(r,g,b)
+            self.bar.bg:SetVertexColor(r/2,g/2,b/2)
+            return
+        end
         local duration = self.duration
 
         if duration == 0 and self.expires == 0 then
@@ -132,7 +138,10 @@ function EonButton_Update(self)
         local color
         if dispelType then color = DebuffTypeColor[dispelType];
         else color = DebuffTypeColor["none"]; end
-        self:SetBackdropColor(color.r,color.g,color.b)
+        self.dispelcolor = { color.r,color.g,color.b }
+        
+        --self.dt:SetVertexColor(color.r,color.g,color.b)
+        --self:SetBackdropColor(color.r,color.g,color.b)
     end
 
     self.OnUpdateCounter = 1
@@ -147,21 +156,11 @@ function EonWeaponButton_Update(self)
     self.duration = 3600
     self.bar:SetMinMaxValues(0, self.duration)
 end
-function EonButton_ChangeSize(self)
-    local w = self.btnWidth or self:GetWidth()
-    local h = self.btnHeight or self:GetHeight()
-    self:SetWidth(w)
-    self:SetHeight(h)
-    self.icon:SetWidth(h)
-    self.icon:SetHeight(h)
-    self.bar:SetWidth(w-h-2)
-    self.bar:SetHeight(h)
-end
 function Eon.CreateHeader(self,unit,filter,opts)
     local hdr = CreateFrame("Frame","EonBuffsHeader",UIParent,"SecureAuraHeaderTemplate")
     hdr:SetAttribute("unit",unit)
     hdr:SetAttribute("filter",filter)
-    hdr:SetAttribute("template","EonTemplate")
+    hdr:SetAttribute("template",opts.template or "EonTemplate")
     hdr:SetAttribute("sortMethod",opts.sortMethod or "INDEX")
     hdr:SetAttribute("point",opts.initialPoint or "TOPRIGHT")
     hdr:SetAttribute("xOffset", opts.xOffset or -40);
@@ -174,9 +173,6 @@ function Eon.CreateHeader(self,unit,filter,opts)
     hdr:SetAttribute("separateOwn",opts.separateOwn)
     hdr:SetAttribute("wrapXOffset",opts.wrapXOffset or 0)
     hdr:SetAttribute("wrapYOffset",opts.wrapYOffset or -36)
-    hdr:SetAttribute("btnWidth",opts.width)
-    hdr:SetAttribute("btnHeight",opts.height)
-    
     
     if opts.weapons then
     hdr:SetAttribute("includeWeapons",1)
@@ -184,12 +180,12 @@ function Eon.CreateHeader(self,unit,filter,opts)
     end
 
     
-    if opts.consolidate then
+    if opts.consolidate and unit == "player" then
     local chdr = CreateFrame("Frame","consHeader",hdr,"SecureAuraHeaderTemplate")
     chdr.parentHeader = hdr
     chdr:SetFrameLevel(5)
     chdr:SetAttribute("filter",filter)
-    chdr:SetAttribute("template","EonTemplate")
+    chdr:SetAttribute("template",opts.template or "EonTemplate")
     chdr:SetAttribute("sortMethod",opts.sortMethod or "INDEX")
     chdr:SetAttribute("point",opts.initialPoint or "TOPRIGHT")
     chdr:SetAttribute("xOffset", opts.xOffset or -40);
@@ -203,6 +199,14 @@ function Eon.CreateHeader(self,unit,filter,opts)
     
     local proxy = CreateFrame("Button","EonConsolidateButton",hdr,"EonConsolidateProxy")
     proxy.consolidateHeader = chdr
+    proxy:SetFrameRef("consolidateHeader",chdr)
+    proxy:SetAttribute("_onclick",[[
+        local chdr = self:GetFrameRef("consolidateHeader")
+        if not chdr:IsVisible()
+        then chdr:Show()
+        else chdr:Hide()
+        end
+    ]])
     
     local backdrop = {
         bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 0,

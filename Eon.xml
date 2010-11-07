@@ -1,11 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
     <Script file="Eon.lua"/>
-	<Button name="EonTemplate" inherits="SecureActionButtonTemplate" virtual="true">
-		<Size x="30" y="25"/>
-        <Attributes>
-			<Attribute name="type" value="cancelaura"/>
-		</Attributes>
+    <Button name="EonBasicTemplate" virtual="true">
+        <Size x="30" y="25"/>
         <Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background"  tile="true">
 			<TileSize>
 				<AbsValue val="0"/>
@@ -28,10 +25,6 @@
                 <FontString name="$parentCount" parentKey="count" inherits="NumberFontNormal" justifyH="RIGHT">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT"/>
-							<!--<Offset>
-								<AbsDimension x="-2" y="2"/>
-							</Offset>
-						</Anchor>-->
 					</Anchors>
 				</FontString>
             </Layer>
@@ -51,6 +44,11 @@
                 </Anchors>
             </StatusBar>
         </Frames>
+    </Button>
+	<Button name="EonTemplate" inherits="SecureActionButtonTemplate, EonBasicTemplate" virtual="true">
+        <Attributes>
+			<Attribute name="type" value="cancelaura"/>
+		</Attributes>
 		<Scripts>
             <OnLoad>
                 EonButton_OnLoad(self)
@@ -77,6 +75,19 @@
 			</OnLeave>
 		</Scripts>
 	</Button>
+    <Button name="EonDebuffTemplate" inherits="EonTemplate" virtual="true">
+        <Size x="35" y="29"/>
+        <!--<Layers>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture name="$parentDebuffTypeIndicator" file="Interface\AddOns\Eon\white" parentKey="dt">
+                    <Size x="6" y="6"/>
+                    <Anchors>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+                </Texture>
+            </Layer>
+        </Layers>-->
+    </Button>
     <Button name="EonWeaponTemplate" inherits="EonTemplate" virtual="true">
         <Scripts>
             <OnLoad>
@@ -99,35 +110,16 @@
 			</OnLeave>
 		</Scripts>
     </Button>
-    <Button name="EonConsolidateProxy" inherits="EonTemplate" virtual="true">
+    <Button name="EonConsolidateProxy" inherits="SecureHandlerClickTemplate, EonBasicTemplate" virtual="true">
         <Scripts>
             <OnLoad>
+                SecureHandler_OnLoad(self)
                 EonButton_OnLoad(self)
                 self:SetBackdropColor(0,0,0,0.8)
                 self.bar:SetStatusBarColor(1,.5,.5);
                 self.icon:SetTexture("Interface\\Buttons\\BuffConsolidation")
                 self.icon:SetTexCoord(0.15, 0.35, 0.3, 0.7)
             </OnLoad>
-            <OnUpdate></OnUpdate>
-            <OnClick>
-                if self.consolidateHeader:IsVisible() then
-                    self.consolidateHeader:Hide()
-                else
-                    self.consolidateHeader:Show()
-                end
-            </OnClick>
-            <OnLeave></OnLeave>
-            <OnEnter></OnEnter>
         </Scripts>
     </Button>
-<!--<Button name="BuffButtonTemplate" inherits="AuraButtonTemplate" virtual="true">
-		<Scripts>
-			<OnLoad>
-				BuffButton_OnLoad(self);
-			</OnLoad>
-			<OnClick>
-				BuffButton_OnClick(self, button, down);
-			</OnClick>
-		</Scripts>
-	</Button> -->
 </Ui>
