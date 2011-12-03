@@ -101,7 +101,7 @@
             </OnAttributeChanged>
             <OnUpdate function="EonButton_OnUpdate"/>
 			<OnEnter>
-                local slot = self:GetAttribute("target-slot")
+                local slot = self.slot
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
                 GameTooltip:SetInventoryItem("player", slot)
 			</OnEnter>

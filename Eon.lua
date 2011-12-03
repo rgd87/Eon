@@ -31,7 +31,7 @@ local headers = {
         sortMethod = "INDEX",
         xOffset = -40,
         yOffset = 0,
-        wrapAfter = 16,
+        wrapAfter = 10,
         wrapXOffset = 0,
         wrapYOffset = -34,
         weapons = true,
@@ -45,7 +45,10 @@ local headers = {
         wrapXOffset = 0,
         wrapYOffset = -40,
         template = "EonDebuffTemplate",
-    }
+    },
+    ["weapons|NA"] ={
+        xOffset = 40
+    },
 }
 
 
@@ -65,6 +68,11 @@ local defaults = {
         point = "TOPRIGHT",
         x = -133,
         y = -138,
+    },
+    ["weapons|NA"] = {
+        point = "TOPRIGHT",
+        x = -133,
+        y = -200,
     },
     consolidate = true,
     hideblizzard = true,
@@ -147,9 +155,16 @@ function EonButton_Update(self)
 end
 function EonWeaponButton_Update(self)
     local slot = self:GetAttribute("target-slot")
-    if not slot then return end
-    local _, mainHandExpiration, _, _, offHandExpiration, _ = GetWeaponEnchantInfo()
-    local expirationTime = (slot == 16) and mainHandExpiration or offHandExpiration
+    -- local slot
+    -- if self:GetParent():GetAttribute("tempEnchant1") == self
+        -- then slot = 16
+    -- elseif self:GetParent():GetAttribute("tempEnchant2") == self
+        -- then slot = 17
+    -- else return end
+    self.slot = slot
+    --if not slot then return end
+    local _, mainHandExpiration, _, _, offHandExpiration, _, _, rangedExpiration, _ = GetWeaponEnchantInfo()
+    local expirationTime = select( slot-15, mainHandExpiration, offHandExpiration, rangedExpiration )
     self.icon:SetTexture(GetInventoryItemTexture("player", slot))
     self.expires = expirationTime/1000+GetTime()
     self.duration = 3600
@@ -242,7 +257,13 @@ function Eon.ADDON_LOADED(self,event,arg1)
     
     for name,opts in pairs(headers) do
         local unit, filter = name:match("(.-)|(.+)")
-        if unit then Eon:CreateHeader(unit,filter,opts) end
+        if unit then
+            if unit == "weapons" then
+                -- Eon:CreateWeaponHeader(opts)
+            else
+                Eon:CreateHeader(unit,filter,opts)
+            end
+        end
     end
     
     if EonDB.hideblizzard then
@@ -328,3 +349,33 @@ function Eon.SlashCmd(msg)
         end
     end
 end
+
+
+-- function Eon.CreateWeaponHeader(opts)
+--     local hdr = CreateFrame("Frame", "EonWeaponHdr")
+--     for i=1,3 do
+--         local btn = Eon.CreateWeaponButton(i)
+--         btn:SetParent(hdr)
+--         hdr[i] = btn
+--     end
+
+--     hdr:SetScript("OnUpdate",function(self,elapsed)
+--         self.OnUpdateCounter = (self.OnUpdateCounter or 0) + time
+--         if self.OnUpdateCounter < 0.5 then return end
+--         self.OnUpdateCounter = 0
+
+--         local hasMainHand, expirationMainHand, _, hasOffHand, expirationOffHand, _, hasRanged, expirationRanged, _ = GetWeaponEnchantInfo()
+--         if hasMainHand and not hdr[1]:IsVisible() then
+--             local mh = hdr[1]
+--             mh.expires = expirationMainHand
+--             mh:Show()
+--         end
+--     end)
+-- end
+
+-- function Eon.CreateWeaponButton(index)
+--     local f = CreateFrame("Button","EonWeaponButton"..index,nil,"EonWeaponTemplate")
+--     f:SetAttribute("type2","cancelaura")
+--     f:SetAttribute("target-slot",index)
+--     f.duration = 3600
+-- end
