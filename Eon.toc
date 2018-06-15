@@ -1,6 +1,5 @@
-## Interface: 50001
+## Interface: 80000
 ## Title: Eon
-## Notes: 
-## Author: shanpu, d87
+## Notes: Aura replacement
 ## SavedVariables: EonDB
 Eon.xml

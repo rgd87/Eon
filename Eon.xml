@@ -2,7 +2,7 @@
 ..\FrameXML\UI.xsd">
     <Script file="Eon.lua"/>
     <Button name="EonBasicTemplate" virtual="true">
-        <Size x="30" y="25"/>
+        <Size x="25" y="30"/>
         <Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background"  tile="true">
 			<TileSize>
 				<AbsValue val="0"/>
@@ -14,7 +14,7 @@
 		<Layers>
             <Layer level="ARTWORK">
                 <Texture name="$parentIcon" parentKey="icon">
-                    <TexCoords left="0.07" right="0.93" top="0.07" bottom="0.93"/>	
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>	
                     <Size>
 						<AbsDimension x="25" y="25"/>
 					</Size>
@@ -30,8 +30,8 @@
             </Layer>
 		</Layers>
         <Frames>
-            <StatusBar name="$parentDuration" parentKey="bar" orientation="VERTICAL" minValue="0" maxValue="100" defaultValue="100">
-                <Size x="3" y="25"/>
+            <StatusBar name="$parentDuration" parentKey="bar" orientation="HORIZONTAL" minValue="0" maxValue="100" defaultValue="100">
+                <Size x="25" y="3"/>
                 <BarTexture file="Interface\AddOns\Eon\white"/>
                 <BarColor r="1" g="0" b="0"/>
                 <Layers>
@@ -40,7 +40,7 @@
                     </Layer>
                 </Layers>
                 <Anchors>
-                    <Anchor point="TOPLEFT"/>
+                    <Anchor point="BOTTOMLEFT"/>
                 </Anchors>
             </StatusBar>
         </Frames>
@@ -76,7 +76,7 @@
 		</Scripts>
 	</Button>
     <Button name="EonDebuffTemplate" inherits="EonTemplate" virtual="true">
-        <Size x="35" y="29"/>
+        <Size x="39" y="45"/>
         <!--<Layers>
             <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture name="$parentDebuffTypeIndicator" file="Interface\AddOns\Eon\white" parentKey="dt">

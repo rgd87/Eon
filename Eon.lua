@@ -29,7 +29,7 @@ local headers = {
     ["player|HELPFUL"] = {
         initialPoint = "TOPRIGHT",
         sortMethod = "INDEX",
-        xOffset = -40,
+        xOffset = -33,
         yOffset = 0,
         wrapAfter = 10,
         wrapXOffset = 0,
@@ -39,7 +39,7 @@ local headers = {
     ["player|HARMFUL"] = { 
         initialPoint = "TOPRIGHT",
         sortMethod = "INDEX",
-        xOffset = -50,
+        xOffset = -46,
         yOffset = 0,
         wrapAfter = 5,
         wrapXOffset = 0,
@@ -94,14 +94,14 @@ function EonButton_OnLoad(self)
     self.filter = hdr:GetAttribute("filter")
     local w = self:GetWidth()
     local h = self:GetHeight()
-    self.icon:SetWidth(h)
-    self.icon:SetHeight(h)
-    self.bar:SetWidth(w-h-2)
-    self.bar:SetHeight(h)
+    self.icon:SetWidth(w)
+    self.icon:SetHeight(w)
+    self.bar:SetWidth(w)
+    self.bar:SetHeight(h-w-2)
 end
 function EonButton_OnUpdate(self,time)
         self.OnUpdateCounter = (self.OnUpdateCounter or 0) + time
-        if self.OnUpdateCounter < 0.2 then return end
+        if self.OnUpdateCounter < 0.05 then return end
         self.OnUpdateCounter = 0
         
         if not self.expires then return end
@@ -111,7 +111,7 @@ function EonButton_OnUpdate(self,time)
         if self.dispelcolor then
             r,g,b = unpack(self.dispelcolor)
             self.bar:SetStatusBarColor(r,g,b)
-            self.bar.bg:SetVertexColor(r/2,g/2,b/2)
+            self.bar.bg:SetVertexColor(r/3,g/3,b/3)
             return
         end
         local duration = self.duration
@@ -127,13 +127,13 @@ function EonButton_OnUpdate(self,time)
             end
         end
         self.bar:SetStatusBarColor(r,g,b)
-        self.bar.bg:SetVertexColor(r/2,g/2,b/2)
+        self.bar.bg:SetVertexColor(r/3,g/3,b/3)
 end
 function EonButton_Update(self)
     local index = self:GetAttribute("index")
     if not index then return end
     
-    local name, rank, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitAura(self.unit,index,self.filter)
+    local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitAura(self.unit,index,self.filter)
     if not name then return end
     self.icon:SetTexture(icon)
     self.bar:SetMinMaxValues(0, duration)
@@ -177,7 +177,7 @@ function Eon.CreateHeader(self,unit,filter,opts)
     hdr:SetAttribute("template",opts.template or "EonTemplate")
     hdr:SetAttribute("sortMethod",opts.sortMethod or "INDEX")
     hdr:SetAttribute("point",opts.initialPoint or "TOPRIGHT")
-    hdr:SetAttribute("xOffset", opts.xOffset or -40);
+    hdr:SetAttribute("xOffset", opts.xOffset or -33);
     hdr:SetAttribute("yOffset", opts.yOffset or 0);
     hdr:SetAttribute("minWidth",10)
     hdr:SetAttribute("minHeight",10)
@@ -188,56 +188,56 @@ function Eon.CreateHeader(self,unit,filter,opts)
     hdr:SetAttribute("wrapXOffset",opts.wrapXOffset or 0)
     hdr:SetAttribute("wrapYOffset",opts.wrapYOffset or -36)
     
-    if opts.weapons then
-    hdr:SetAttribute("includeWeapons",1)
-    hdr:SetAttribute("weaponTemplate","EonWeaponTemplate")
-    end
+    -- if opts.weapons then
+    -- hdr:SetAttribute("includeWeapons",1)
+    -- hdr:SetAttribute("weaponTemplate","EonWeaponTemplate")
+    -- end
 
     
-    if EonDB.consolidate and unit == "player" then
-    local chdr = CreateFrame("Frame","consHeader",hdr,"SecureAuraHeaderTemplate")
-    chdr.parentHeader = hdr
-    chdr:SetFrameLevel(5)
-    chdr:SetAttribute("filter",filter)
-    chdr:SetAttribute("template",opts.template or "EonTemplate")
-    chdr:SetAttribute("sortMethod",opts.sortMethod or "INDEX")
-    chdr:SetAttribute("point",opts.initialPoint or "TOPRIGHT")
-    chdr:SetAttribute("xOffset", opts.xOffset or -40);
-    chdr:SetAttribute("yOffset", opts.yOffset or 0);
-    chdr:SetAttribute("minWidth",10)
-    chdr:SetAttribute("minHeight",10)
-    chdr:SetAttribute("wrapAfter",opts.wrapAfter and opts.wrapAfter*.5 or 6)
-    chdr:SetAttribute("wrapXOffset",opts.wrapXOffset or 0)
-    chdr:SetAttribute("wrapYOffset",opts.wrapYOffset or -36)
-    --chdr:Show()
-    
-    local proxy = CreateFrame("Button","EonConsolidateButton",hdr,"EonConsolidateProxy")
-    proxy.consolidateHeader = chdr
-    proxy:SetFrameRef("consolidateHeader",chdr)
-    proxy:SetAttribute("_onclick",[[
-        local chdr = self:GetFrameRef("consolidateHeader")
-        if not chdr:IsVisible()
-        then chdr:Show()
-        else chdr:Hide()
-        end
-    ]])
-    
-    local backdrop = {
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 0,
-        insets = {left = -7, right = -7, top = -7, bottom = -7},
-    }
-    chdr:SetBackdrop(backdrop)
-    chdr:SetBackdropColor(0,0,0,0.8)
-    chdr:SetPoint("TOPRIGHT",proxy,"BOTTOMRIGHT",0,-9)
-    
-    hdr:SetAttribute("consolidateDuration",300)
-    hdr:SetAttribute("consolidateTreshold",60)
-    --hdr:SetAttribute("consolidateFraction",.10)
-    
-    hdr:SetAttribute("consolidateTo",1)
-    hdr:SetAttribute("consolidateProxy",proxy)
-    hdr:SetAttribute("consolidateHeader",chdr)
-    end
+    -- if EonDB.consolidate and unit == "player" then
+    --     local chdr = CreateFrame("Frame","consHeader",hdr,"SecureAuraHeaderTemplate")
+    --     chdr.parentHeader = hdr
+    --     chdr:SetFrameLevel(5)
+    --     chdr:SetAttribute("filter",filter)
+    --     chdr:SetAttribute("template",opts.template or "EonTemplate")
+    --     chdr:SetAttribute("sortMethod",opts.sortMethod or "INDEX")
+    --     chdr:SetAttribute("point",opts.initialPoint or "TOPRIGHT")
+    --     chdr:SetAttribute("xOffset", opts.xOffset or -40);
+    --     chdr:SetAttribute("yOffset", opts.yOffset or 0);
+    --     chdr:SetAttribute("minWidth",10)
+    --     chdr:SetAttribute("minHeight",10)
+    --     chdr:SetAttribute("wrapAfter",opts.wrapAfter and opts.wrapAfter*.5 or 6)
+    --     chdr:SetAttribute("wrapXOffset",opts.wrapXOffset or 0)
+    --     chdr:SetAttribute("wrapYOffset",opts.wrapYOffset or -36)
+    --     --chdr:Show()
+        
+    --     local proxy = CreateFrame("Button","EonConsolidateButton",hdr,"EonConsolidateProxy")
+    --     proxy.consolidateHeader = chdr
+    --     proxy:SetFrameRef("consolidateHeader",chdr)
+    --     proxy:SetAttribute("_onclick",[[
+    --         local chdr = self:GetFrameRef("consolidateHeader")
+    --         if not chdr:IsVisible()
+    --         then chdr:Show()
+    --         else chdr:Hide()
+    --         end
+    --     ]])
+        
+    --     local backdrop = {
+    --         bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 0,
+    --         insets = {left = -7, right = -7, top = -7, bottom = -7},
+    --     }
+    --     chdr:SetBackdrop(backdrop)
+    --     chdr:SetBackdropColor(0,0,0,0.8)
+    --     chdr:SetPoint("TOPRIGHT",proxy,"BOTTOMRIGHT",0,-9)
+        
+    --     hdr:SetAttribute("consolidateDuration",300)
+    --     hdr:SetAttribute("consolidateTreshold",60)
+    --     --hdr:SetAttribute("consolidateFraction",.10)
+        
+    --     hdr:SetAttribute("consolidateTo",1)
+    --     hdr:SetAttribute("consolidateProxy",proxy)
+    --     hdr:SetAttribute("consolidateHeader",chdr)
+    -- end
     
     --hdr:SetPoint("CENTER",UIParent,"CENTER",0,0)
     hdr:Show()
@@ -269,9 +269,9 @@ function Eon.ADDON_LOADED(self,event,arg1)
     if EonDB.hideblizzard then
         BuffFrame:UnregisterEvent("UNIT_AURA")
         BuffFrame:Hide()
-        ConsolidatedBuffs.Show = ConsolidatedBuffs.Hide
-        ConsolidatedBuffs:Hide()
-        TemporaryEnchantFrame:Hide()
+        -- ConsolidatedBuffs.Show = ConsolidatedBuffs.Hide
+        -- ConsolidatedBuffs:Hide()
+        -- TemporaryEnchantFrame:Hide()
     end
     
     SLASH_EON1= "/eon"
@@ -308,7 +308,7 @@ function Eon.CreateAnchor(self,hdr,tbl)
 
     f:SetPoint(EonDB[tbl].point, UIParent, EonDB[tbl].point, EonDB[tbl].x, EonDB[tbl].y) 
     
-    hdr:SetPoint("TOPRIGHT",f,"BOTTOMRIGHT",0,-6)
+    hdr:SetPoint("RIGHT",f,"LEFT",0,-6)
     
     f:Hide()
     
