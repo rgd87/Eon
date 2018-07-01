@@ -24,7 +24,7 @@
                 </Texture>
                 <FontString name="$parentCount" parentKey="count" inherits="NumberFontNormal" justifyH="RIGHT">
 					<Anchors>
-						<Anchor point="BOTTOMRIGHT"/>
+						<Anchor point="BOTTOMRIGHT" y="3"/>
 					</Anchors>
 				</FontString>
             </Layer>

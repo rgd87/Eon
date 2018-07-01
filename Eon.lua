@@ -98,6 +98,9 @@ function EonButton_OnLoad(self)
     self.icon:SetHeight(w)
     self.bar:SetWidth(w)
     self.bar:SetHeight(h-w-2)
+    -- self.bar:SetFrameLevel(0)
+    -- self.bar:SetFrameStrata()
+    -- self.count:SetDrawLayer("ARTWORK",2)
 end
 function EonButton_OnUpdate(self,time)
         self.OnUpdateCounter = (self.OnUpdateCounter or 0) + time
@@ -308,7 +311,7 @@ function Eon.CreateAnchor(self,hdr,tbl)
 
     f:SetPoint(EonDB[tbl].point, UIParent, EonDB[tbl].point, EonDB[tbl].x, EonDB[tbl].y) 
     
-    hdr:SetPoint("RIGHT",f,"LEFT",0,-6)
+    hdr:SetPoint("TOPRIGHT",f,"TOPLEFT",0,-6)
     
     f:Hide()
     
