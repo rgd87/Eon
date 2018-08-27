@@ -174,7 +174,7 @@ function EonWeaponButton_Update(self)
     self.bar:SetMinMaxValues(0, self.duration)
 end
 function Eon.CreateHeader(self,unit,filter,opts)
-    local hdr = CreateFrame("Frame","EonBuffsHeader",UIParent,"SecureAuraHeaderTemplate")
+    local hdr = CreateFrame("Frame","EonBuffsHeader", EonPetBattleFrameHider, "SecureAuraHeaderTemplate")
     hdr:SetAttribute("unit",unit)
     hdr:SetAttribute("filter",filter)
     hdr:SetAttribute("template",opts.template or "EonTemplate")
