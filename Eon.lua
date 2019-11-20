@@ -190,6 +190,11 @@ function Eon.CreateHeader(self,unit,filter,opts)
     hdr:SetAttribute("wrapXOffset",opts.wrapXOffset or 0)
     hdr:SetAttribute("wrapYOffset",opts.wrapYOffset or -36)
 
+    -- if opts.weapons then
+    --     hdr:SetAttribute("includeWeapons",1)
+    --     hdr:SetAttribute("weaponTemplate","EonWeaponTemplate")
+    -- end
+
     hdr:Show()
 
     self.headers[unit] = self.headers[unit] or {}
