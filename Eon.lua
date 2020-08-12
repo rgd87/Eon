@@ -82,14 +82,26 @@ local defaults = {
 
 local nextaura = function(hdr, i )
     i = i + 1;
-	local child = hdr:GetAttribute("child" .. i);
-	if child and child:IsShown() then
-		return i, child , child:GetAttribute("index");
-	end
+    local child = hdr:GetAttribute("child" .. i);
+    if child and child:IsShown() then
+        return i, child , child:GetAttribute("index");
+    end
 end
 local auras = function(hdr) return nextaura, hdr, 0 end
+
+local MakeBorder = function(self, tex, left, right, top, bottom, level)
+    local t = self:CreateTexture(nil,"BORDER",nil,level)
+    t:SetTexture(tex)
+    t:SetPoint("TOPLEFT", self, "TOPLEFT", left, -top)
+    t:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -right, bottom)
+    return t
+end
 function EonButton_OnLoad(self)
-    self:SetBackdropColor(0,0,0,0.8);
+
+    local border = 2
+    local outline = MakeBorder(self, "Interface\\BUTTONS\\WHITE8X8", -border, -border, -border, -border, -2)
+    outline:SetVertexColor(0,0,0, 0.5)
+
     local hdr = self:GetParent()
     if hdr.parentHeader then hdr = hdr.parentHeader end
     self.unit = hdr:GetAttribute("unit")
